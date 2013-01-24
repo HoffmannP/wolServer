@@ -1,0 +1,56 @@
+package wol
+
+import (
+	"encoding/hex"
+	"errors"
+	"log"
+	"net"
+	"strings"
+)
+
+// macAddr form 12:34:56:78:9a:bc
+func SendMagicPacket(macAddr string, bcastAddr string) error {
+
+	if len(macAddr) != (6*2 + 5) {
+		return errors.New("Invalid MAC Address String: " + macAddr)
+	}
+
+	packet, err := constructMagicPacket(macAddr)
+	if err != nil {
+		return err
+	}
+
+	a, err := net.ResolveUDPAddr("udp", bcastAddr+":7")
+	if err != nil {
+		return err
+	}
+
+	c, err := net.DialUDP("udp", nil, a)
+	if err != nil {
+		return err
+	}
+	defer c.Close()
+
+	written, err := c.Write(packet)
+
+	// Packet must be 102 bytes in length
+	if written != len(packet) {
+		return err
+	}
+
+	return nil
+}
+
+func constructMagicPacket(macAddr string) ([]byte, error) {
+	macBytes, err := hex.DecodeString(strings.Join(strings.Split(macAddr, ":"), ""))
+	if err != nil {
+		log.Fatalln("Error Hex Decoding:", err)
+		return nil, err
+	}
+
+	b := []uint8{255, 255, 255, 255, 255, 255}
+	for i := 0; i < 16; i++ {
+		b = append(b, macBytes...)
+	}
+	return b, err
+}
