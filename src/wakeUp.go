@@ -37,7 +37,7 @@ func main() {
 	}
 
 	// read template
-	me.t, err = template.New("status.html").Funcs(template.FuncMap{"status": status}).ParseFiles("status.html")
+	me.t, err = template.New("status.html").Funcs(template.FuncMap{"status": status}).ParseFiles("template/status.html")
 	if err != nil {
 		fmt.Println("error:", err)
 	}
