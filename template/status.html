@@ -4,6 +4,21 @@
 	<meta charset="utf-8" />
 	<title>Wake-Over-Lan Interface</title>
 	<link rel="stylesheet" type="text/css" media="screen" href="css/master.css" />
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+	<style>
+		body { font-family: sans-serif; }
+		span.offline { color: red; }
+		span.online  { color: green; }
+		a { 
+			border: 2px outset ButtonFace;
+			color: black;
+			padding: 1px 2px;
+			background: ButtonFace;
+			border-radius: 1px;
+			text-decoration: none;
+		}
+		td { border: 3px solid white; }
+	</style>
 </head>
 <body>
 	<h1>Wake-Over-Lan Interface</h1>
@@ -13,13 +28,20 @@
 			<th>Status</th>
 			<th>Action</th>
 		</tr>
-		{{range .}}
+		{{range $Name, $Ele := .}}
 		<tr>
-			<td>{{.Name}}</td>
-			<td>{{.IP | status}}</td>
-			<td><a href="/wake_up.php?IP={{.IP}}&amp;MAC={{.MAC}}">Wake Up!</a></td>
+			<td>{{$Name}}</td>
+			<td class="netstat"><span class="servername">{{$Name}}</span>s network status unknown</td>
+			<td><a href="/wake_up.php?Name={{$Name}}">Wake Up!</a></td>
 		</tr>
 		{{end}}
 	</table>
+	<script>
+		function queryNetStat(i, ele) {
+			url = "/netstat.php?Name=" + $(".servername", ele).text()
+			$(ele).load(url);
+		}
+		$("td.netstat").each( queryNetStat );
+	</script>
 </body>
 </html>
