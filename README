@@ -1,1 +1,2 @@
 The Server is able to wake up a server identified by IP and MAC and pretends to work as PHP-Server
+Network status identification works via ping and connection attempts to different ports
