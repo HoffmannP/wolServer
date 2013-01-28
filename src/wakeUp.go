@@ -2,30 +2,40 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"html/template"
 	"net/http"
 	"networking"
 	"os"
+	"sort"
+	"strconv"
 )
 
-type Config struct {
-	Port  int
-	Nodes []struct {
-		Name string
-		IP   string
-		MAC  string
-	}
-}
-
-type node struct {
-	IP  string
-	MAC string
+type nodes []struct {
+	Name string
+	Text string
+	IP   string
+	MAC  string
 }
 
 type mainObject struct {
+	r bool
+	l bool
+	p string
 	t *template.Template
-	s map[string]node
+	n nodes
+}
+
+func (n *nodes) Len() int {
+	return len(*n)
+}
+func (n *nodes) Less(i, j int) bool {
+	return (*n)[i].Name < (*n)[j].Name
+}
+func (n *nodes) Swap(i, j int) {
+	(*n)[i], (*n)[j] = (*n)[j], (*n)[i]
+	return
 }
 
 func status(ip string) string {
@@ -35,41 +45,67 @@ func status(ip string) string {
 func main() {
 	me := new(mainObject)
 
+	// logging
+	flag.BoolVar(&me.r, "root", true, "run in root mode")
+	flag.BoolVar(&me.l, "v", false, "verbose")
+	flag.StringVar(&me.p, "port", "8000", "port number")
+	flag.Parse()
+	if me.l {
+		fmt.Printf("Rootmode: %t\n", me.r)
+	}
+
 	// read configuration
 	config, err := os.Open("config.json")
 	if err != nil {
-		fmt.Println("error:", err)
+		panic(err)
 	}
 	dec := json.NewDecoder(config)
-	var cfg Config
-	err = dec.Decode(&cfg)
+	err = dec.Decode(&me.n)
+	sort.Sort(&me.n)
 	if err != nil {
-		fmt.Println("error:", err)
-	}
-	me.s = make(map[string]node, len(cfg.Nodes))
-	for _, n := range cfg.Nodes {
-		me.s[n.Name] = node{n.IP, n.MAC}
+		panic(err)
 	}
 
 	// read template
 	me.t, err = template.New("status.html").Funcs(template.FuncMap{"status": status}).ParseFiles("template/status.html")
 	if err != nil {
-		fmt.Println("error:", err)
+		panic(err)
 	}
 
 	// start server
 	http.Handle("/", me)
-	http.ListenAndServe(fmt.Sprintf(":%d", cfg.Port), nil)
+	if me.l {
+		fmt.Printf("Running WOL-server on port %s\n", me.p)
+	}
+	http.ListenAndServe(fmt.Sprintf(":"+me.p), nil)
 }
 
-func (me *mainObject) wol(Name string) {
-	networking.SendMagicPacket(me.s[Name].MAC, me.s[Name].IP)
-	println("Waking Up ( IP=", me.s[Name].IP, ")")
+func (me *mainObject) wol(ID int) {
+	IP := "255.255.255.255"
+	err := networking.SendMagicPacket(me.n[ID].MAC, IP)
+	if err != nil {
+		fmt.Println(err)
+	}
+	if me.l {
+		println("sending magic packet to", me.n[ID].Name)
+	}
 }
 
-func (me *mainObject) netstat(w http.ResponseWriter, Name string) {
-	status := networking.Netstat(me.s[Name].IP)
-	println("IP", me.s[Name].IP, "online", status)
+func (me *mainObject) netstat(w http.ResponseWriter, ID int) {
+	var status bool
+	var err error
+	if me.r {
+		status, err = networking.Ping(me.n[ID].IP)
+	} else {
+		status, err = networking.Netstats(me.n[ID].IP, []string{"135", "137", "138", "139", "445", "593", "3389", "22"})
+	}
+	if err != nil {
+		fmt.Println(err)
+		status = false
+	}
+	if me.l {
+		fmt.Printf("  %-25s online: %t\n", me.n[ID].Name, status)
+	}
 	if status {
 		fmt.Fprint(w, "<span class='online'>online</span>")
 	} else {
@@ -80,14 +116,20 @@ func (me *mainObject) netstat(w http.ResponseWriter, Name string) {
 func (me *mainObject) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/wake_up.php" {
 		r.ParseForm()
-		me.wol(r.Form.Get("Name"))
+		id, err := strconv.Atoi(r.Form.Get("ID"))
+		if err == nil {
+			me.wol(id)
+		}
 		http.Redirect(w, r, "/index.php", 302)
 		return
 	}
 
 	if r.URL.Path == "/netstat.php" {
 		r.ParseForm()
-		me.netstat(w, r.Form.Get("Name"))
+		id, err := strconv.Atoi(r.Form.Get("ID"))
+		if err == nil {
+			me.netstat(w, id)
+		}
 		return
 	}
 
@@ -96,8 +138,8 @@ func (me *mainObject) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := me.t.Execute(w, me.s)
+	err := me.t.Execute(w, me.n)
 	if err != nil {
-		fmt.Println("error:", err)
+		panic(err)
 	}
 }

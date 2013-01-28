@@ -3,12 +3,12 @@
 <head>
 	<meta charset="utf-8" />
 	<title>Wake-Over-Lan Interface</title>
-	<link rel="stylesheet" type="text/css" media="screen" href="css/master.css" />
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
 	<style>
 		body { font-family: sans-serif; }
 		span.offline { color: red; }
 		span.online  { color: green; }
+		span.servername { display: none; }
 		a { 
 			border: 2px outset ButtonFace;
 			color: black;
@@ -25,20 +25,19 @@
 	<table>
 		<tr>
 			<th>User</th>
-			<th>Status</th>
+			<th>Network Status</th>
 			<th>Action</th>
 		</tr>
-		{{range $Name, $Ele := .}}
-		<tr>
-			<td>{{$Name}}</td>
-			<td class="netstat"><span class="servername">{{$Name}}</span>s network status unknown</td>
-			<td><a href="/wake_up.php?Name={{$Name}}">Wake Up!</a></td>
-		</tr>
-		{{end}}
+		{{range $id, $ele := .}}
+		<tr title="{{$ele.Text}}">
+			<td>{{$ele.Name}}</td>
+			<td class="netstat"><span class="servername">{{$id}}</span>unknown</td>
+			<td><a href="/wake_up.php?ID={{$id}}">Wake Up!</a></td>
+		</tr>{{end}}
 	</table>
 	<script>
 		function queryNetStat(i, ele) {
-			url = "/netstat.php?Name=" + $(".servername", ele).text()
+			url = "/netstat.php?ID=" + $(".servername", ele).text()
 			$(ele).load(url);
 		}
 		$("td.netstat").each( queryNetStat );

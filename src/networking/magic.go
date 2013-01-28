@@ -4,32 +4,34 @@ import (
 	"net"
 )
 
-const wol_port = "7"
+const wol_port = "9"
 
-func SendMagicPacket(macAddr string, bcastAddr string) error {
-
-	packet, err := constructMagicPacket(macAddr)
+func SendMagicPacket(MAC string, broadcast string) error {
+	broadcast = broadcast + ":" + wol_port
+	packet, err := constructMagicPacket(MAC)
 	if err != nil {
 		return err
 	}
 
-	c, err := net.Dial("udp", bcastAddr+":"+wol_port)
+	c, err := net.Dial("udp4", broadcast)
 	if err != nil {
 		return err
 	}
 	defer c.Close()
 
 	written, err := c.Write(packet)
-
-	if (err != nil) || (written != len(packet)) {
+	// println("Sending magic packet to", broadcast, "with", MAC)
+	if err != nil {
 		return err
 	}
-
+	if written < len(packet) {
+		return net.UnknownNetworkError("package not completely send")
+	}
 	return nil
 }
 
-func constructMagicPacket(macAddr string) ([]byte, error) {
-	macBytes, err := net.ParseMAC(macAddr)
+func constructMagicPacket(MAC string) ([]byte, error) {
+	macBytes, err := net.ParseMAC(MAC)
 	if err != nil {
 		return nil, err
 	}
