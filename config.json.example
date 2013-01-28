@@ -1,0 +1,11 @@
+[
+	{	
+		"Name":	"… a name …",
+		"Text": "… a comment shown as title-tag",
+		"IP":	"… ip (or hostname) …",
+		"MAC":	"… mac (will not be checked using arp) …"
+	},
+	{
+		… another entry …
+	}
+]
