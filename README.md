@@ -6,7 +6,7 @@ This is a minimalistic server to wake up computers in your network using a web-g
 - The server pretends to run PHP. 
 - Network status identification works via ping and connection attempts to different ports.
 
-See [Docker/README.md] if you want to build & run in Docker
+See the (Docker Readme)[Docker/README.md] if you want to build & run in Docker
 
 ## build
 with go already installed
@@ -46,7 +46,7 @@ iterates over all entries in `config.json`
 `{{$ele.Text}}` displays the `Text` entry
 `{{$id}}` displays the internal id of the entry (the position starting with zero)
 
-further information about the templating engine can be found here: [https://golang.org/pkg/html/template]
+further information about the templating engine can be found at the [golang template package documentation](https://golang.org/pkg/html/template)
 
 ## compression
 I like to compress the resulting template just for fun:
