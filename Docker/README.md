@@ -7,7 +7,7 @@ Docker will probably pull the [`golang:latest` image](https://hub.docker.com/_/g
 
     docker run --rm -u=$(id -u):$(id -g) -v "$PWD":/go -e CGO_ENABLED=0 golang go build src/wakeUp.go
 
-You need to disable CGO to compile to a binary that can be used in the *scratch* image.
+You need to disable CGO to compile to a binary that can be used in the [`scratch` image](https://hub.docker.com/_/scratch/).
 
 ## run
 Straight forward run:

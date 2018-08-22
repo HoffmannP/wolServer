@@ -22,9 +22,14 @@ Create a `config.json` according to your environment and just do it (✔).
 If you want to serve a favicon place a file `favicon.ico` in the template dir.
 
 ## usage
-`-port string`	port number (default "8000")
-`-root` 		run in root mode (default true)
-`-v`			verbose
+```
+Usage of ./wakeUp:
+  -port string
+    	port number (default "8000")
+  -root
+    	run in root mode (default true)
+  -v	verbose
+```
 
 ## endpoints
 The server supports the following endpoints:
