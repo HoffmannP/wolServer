@@ -1,6 +1,6 @@
 # Wake-On-Lan Server
 
-This is a minimalistic server to wake up computers in your network using a web-gui
+This is a minimalistic server to wake up computers in your network using a web-gui.
 
 - Targets are identified by their IP and MAC.
 - The server pretends to run PHP. 
@@ -9,17 +9,17 @@ This is a minimalistic server to wake up computers in your network using a web-g
 See the [Docker Readme](Docker/README.md) if you want to build & run in Docker
 
 ## build
-with go already installed
+With go already installed:
 
     GOPATH=$PWD go build src/wakeUp.go
 
 
 ## run
-create a `config.json` according to your environment and just do it (✔)
+Create a `config.json` according to your environment and just do it (✔).
 
     ./wakeUp
 
-if you want to serve a favicon place a file "favicon.ico" in the template dir
+If you want to serve a favicon place a file `favicon.ico` in the template dir.
 
 ## usage
 `-port string`	port number (default "8000")
@@ -27,14 +27,14 @@ if you want to serve a favicon place a file "favicon.ico" in the template dir
 `-v`			verbose
 
 ## endpoints
-the server supports the following endpoints:
+The server supports the following endpoints:
 - `/favicon.ico` responds with the content of the template/favicon.ico if present
 - `/wake_up.php` uses GET['id'] to wakeup the coresponding entry
 - `/netstat.php` uses GET['id'] to respond with the determined state (offline/online)
 - `/index.php` (and every other endpoint) shows `status.html`
 
 ## template
-status.html is a template for the server, to change it you might want to know:
+`status.html` is a template for the server, to change it you might want to know:
 
     {{range $id, $ele := .}}
     …
@@ -42,11 +42,11 @@ status.html is a template for the server, to change it you might want to know:
 
 iterates over all entries in `config.json`
 
-`{{$ele.Name}}` displays the `Name` entry
-`{{$ele.Text}}` displays the `Text` entry
-`{{$id}}` displays the internal id of the entry (the position starting with zero)
+- `{{$ele.Name}}` displays the `Name` entry
+- `{{$ele.Text}}` displays the `Text` entry
+- `{{$id}}` displays the internal id of the entry (the position starting with zero)
 
-further information about the templating engine can be found at the [golang template package documentation](https://golang.org/pkg/html/template)
+Further information about the templating engine can be found at the [golang template package documentation](https://golang.org/pkg/html/template).
 
 ## compression
 I like to compress the resulting template just for fun:
