@@ -46,7 +46,7 @@ iterates over all entries in `config.json`
 `{{$ele.Text}}` displays the `Text` entry
 `{{$id}}` displays the internal id of the entry (the position starting with zero)
 
-further information about the templating engine can be found at the (golang template package documentation)[https://golang.org/pkg/html/template]
+further information about the templating engine can be found at the [golang template package documentation](https://golang.org/pkg/html/template)
 
 ## compression
 I like to compress the resulting template just for fun:
