@@ -3,7 +3,7 @@
 You can use Docker in both steps
 
 ## build
-Docker will probably pull the `golang:latest` image (see [https://hub.docker.com/_/golang/])
+Docker will probably pull the [`golang:latest` image](https://hub.docker.com/_/golang/)
 
     docker run --rm -u=$(id -u):$(id -g) -v "$PWD":/go -e CGO_ENABLED=0 golang go build src/wakeUp.go
 
