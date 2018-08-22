@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"html/template"
+	"io"
 	"net/http"
 	"networking"
 	"os"
@@ -80,6 +81,18 @@ func main() {
 	http.ListenAndServe(fmt.Sprintf(":"+me.p), nil)
 }
 
+func (me *mainObject) fav(w http.ResponseWriter) {
+	f, err := os.Open("template/favicon.ico")
+	if err != nil {
+		fmt.Fprint(w, "")
+		return
+	}
+	_, err = io.Copy(w, f)
+	if err != nil {
+		panic(err)
+	}
+}
+
 func (me *mainObject) wol(ID int) {
 	IP := "255.255.255.255"
 	err := networking.SendMagicPacket(me.n[ID].MAC, IP)
@@ -87,7 +100,7 @@ func (me *mainObject) wol(ID int) {
 		fmt.Println(err)
 	}
 	if me.l {
-		println("sending magic packet to", me.n[ID].Name)
+		println("Sending magic packet to", me.n[ID].Name)
 	}
 }
 
@@ -114,6 +127,11 @@ func (me *mainObject) netstat(w http.ResponseWriter, ID int) {
 }
 
 func (me *mainObject) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path == "/favicon.ico" {
+		me.fav(w)
+		return
+	}
+
 	if r.URL.Path == "/wake_up.php" {
 		r.ParseForm()
 		id, err := strconv.Atoi(r.Form.Get("ID"))

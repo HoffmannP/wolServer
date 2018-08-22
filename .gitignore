@@ -1,5 +1,9 @@
-wakeUp
+# ignore editor files
+*.sublime-*
+
+# don't save config
 config.json
-wolServer.sublime-workspace
-wolServer.sublime-project
+
+# ignore binaries
+wakeUp
 bin/
