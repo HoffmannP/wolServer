@@ -22,7 +22,7 @@ Create a `config.json` according to your environment and just do it (✔).
 If you want to serve a favicon place a file `favicon.ico` in the template dir.
 
 ## wakeup target
-In some environments broadcasting magic packets does not work. Packets are not *also* send to the target IP
+In some environments broadcasting magic packets does not work. Packets are therefore *also* send to the target IP.
 TODO: Configure the target for the packet per entry
 
 ## root mode
