@@ -94,8 +94,13 @@ func (me *mainObject) fav(w http.ResponseWriter) {
 }
 
 func (me *mainObject) wol(ID int) {
-	IP := "255.255.255.255"
-	err := networking.SendMagicPacket(me.n[ID].MAC, IP)
+	Broadcast := "255.255.255.255"
+	err := networking.SendMagicPacket(me.n[ID].MAC, Broadcast)
+	if err != nil {
+		fmt.Println(err)
+	}
+	// re-send package to IP of target
+	err = networking.SendMagicPacket(me.n[ID].MAC, me.n[ID].IP)
 	if err != nil {
 		fmt.Println(err)
 	}
