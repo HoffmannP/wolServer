@@ -28,7 +28,7 @@ TODO: Configure the target for the packet per entry
 ## root mode
 Sometimes you can't run wakeUp as root.
 To replace the root access limited ping command in not-root-mode the server tries to connect to some common ports.
-Currently these are: 135, 137, 138, 139, 445, 593, 3389, 22. You can easily change this.
+Currently these are: 135, 137, 138, 139, 445, 593, 3389, 22. You can easily change these in the source.
 TODO: Configure ping-mode per entry
 
 ## usage
