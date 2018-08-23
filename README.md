@@ -21,6 +21,16 @@ Create a `config.json` according to your environment and just do it (✔).
 
 If you want to serve a favicon place a file `favicon.ico` in the template dir.
 
+## wakeup target
+In some environments broadcasting magic packets does not work. Packets are not *also* send to the target IP
+TODO: Configure the target for the packet per entry
+
+## root mode
+Sometimes you can't run wakeUp as root.
+To replace the root access limited ping command in not-root-mode the server tries to connect to some common ports.
+Currently these are: 135, 137, 138, 139, 445, 593, 3389, 22. You can easily change this.
+TODO: Configure ping-mode per entry
+
 ## usage
 ```
 Usage of ./wakeUp:
